@@ -7,6 +7,7 @@ hide:
 ### 构建
 
 ```shell
+export CGO_ENABLED=0
 go build
 ```
 

@@ -11,6 +11,10 @@ only those that are needed.
 
 This document lists the properties provided by each analyzer that can be used by rules.
 
+!!! tip
+
+    Many analyzers do not provide all properties at once, but rather gradually add/update fields as the connection proceeds. For instance, when an HTTP connection has sent a request but has not yet received a response, the HTTP analyzer will only have the `req` part without `resp`. Each connection is checked against rules whenever at least one property changes. Rules need to be able to correctly handle cases where the needed fields are nil. (e.g., `http != nil && http.resp != nil` or using the `?` operator `http?.resp`)
+
 ## Built-in
 
 Every connection will always have the following properties:
