@@ -28,11 +28,11 @@ OpenGFW is your very own DIY [Great Firewall of China](https://en.wikipedia.org/
 ## Features
 
 - Full IP/TCP reassembly, various protocol analyzers
-  - HTTP, TLS, QUIC, DNS, SSH, SOCKS4/5, WireGuard, and many more to come
-  - "Fully encrypted traffic" detection for Shadowsocks,
-    etc. (https://gfw.report/publications/usenixsecurity23/en/)
-  - Trojan (proxy protocol) detection
-  - [WIP] Machine learning based traffic classification
+    - HTTP, TLS, QUIC, DNS, SSH, SOCKS4/5, WireGuard, OpenVPN, and many more to come
+    - "Fully encrypted traffic" detection for Shadowsocks, VMess,
+      etc. (https://gfw.report/publications/usenixsecurity23/en/)
+    - Trojan (proxy protocol) detection
+    - [WIP] Machine learning based traffic classification
 - Full IPv4 and IPv6 support
 - Flow-based multicore load balancing
 - Connection offloading
