@@ -78,8 +78,11 @@ repo_url: https://github.com/apernet/OpenGFW
 
 nav:
   - Home: index.md
-  - Build & Run: build-run.md
-  - Analyzers: analyzers.md
+  - Docs:
+      - Build & Run: docs/build-run.md
+      - Analyzers: docs/analyzers.md
+      - Functions: docs/functions.md
+  - GitHub: https://github.com/apernet/OpenGFW
 
 plugins:
   - search
@@ -97,5 +100,8 @@ plugins:
           build: true
           nav:
             - 首页: index.md
-            - 构建与运行: build-run.md
-            - 分析器: analyzers.md
+            - 文档:
+                - 构建与运行: docs/build-run.md
+                - 分析器: docs/analyzers.md
+                - 内置函数: docs/functions.md
+            - GitHub: https://github.com/apernet/OpenGFW

@@ -1,17 +1,15 @@
 ---
-title: Build & Run
-hide:
-  - navigation
+title: 构建与运行
 ---
 
-### Build
+### 构建
 
 ```shell
 export CGO_ENABLED=0
 go build
 ```
 
-### Run
+### 运行
 
 ```shell
 export OPENGFW_LOG_LEVEL=debug
@@ -20,23 +18,23 @@ export OPENGFW_LOG_LEVEL=debug
 
 #### OpenWrt
 
-OpenGFW has been tested to work on OpenWrt 23.05 (other versions should also work, just not verified).
+OpenGFW 在 OpenWrt 23.05 上测试可用（其他版本应该也可以，暂时未经验证）。
 
-Install the dependencies:
+安装依赖：
 
 ```shell
 opkg install nftables kmod-nft-queue kmod-nf-conntrack-netlink
 ```
 
-### Example config
+### 样例配置
 
 ```yaml
 io:
   queueSize: 1024
   rcvBuf: 4194304
   sndBuf: 4194304
-  local: true # set to false if you want to run OpenGFW on FORWARD chain
-  rst: false # set to true if you want to send RST for blocked TCP connections, local=false only
+  local: true # 如果需要在 FORWARD 链上运行 OpenGFW，请设置为 false
+  rst: false # 是否对要阻断的 TCP 连接发送 RST。仅在 local=false 时有效
 
 workers:
   count: 4
@@ -44,22 +42,21 @@ workers:
   tcpMaxBufferedPagesTotal: 4096
   tcpMaxBufferedPagesPerConn: 64
   udpMaxStreams: 4096
-# The path to load specific local geoip/geosite db files.
-# If not set, they will be automatically downloaded from https://github.com/Loyalsoldier/v2ray-rules-dat
+# 指定的 geoip/geosite 档案路径
+# 如果未设置，将自动从 https://github.com/Loyalsoldier/v2ray-rules-dat 下载
 # geo:
 #   geoip: geoip.dat
 #   geosite: geosite.dat
 ```
 
-### Example rules
+### 样例规则
 
-[Analyzer properties](analyzers.md)
+[解析器属性](analyzers.md)
 
-For syntax of the expression language, please refer
-to [Expr Language Definition](https://expr-lang.org/docs/language-definition).
+规则的语法请参考 [Expr Language Definition](https://expr-lang.org/docs/language-definition)。
 
 ```yaml
-# A rule must have at least one of "action" or "log" field set.
+# 每条规则必须至少包含 action 或 log 中的一个。
 - name: log horny people
   log: true
   expr: let sni = string(tls?.req?.sni); sni contains "porn" || sni contains "hentai"
@@ -115,11 +112,11 @@ to [Expr Language Definition](https://expr-lang.org/docs/language-definition).
   expr: cidr(string(ip.dst), "192.168.0.0/16")
 ```
 
-#### Supported actions
+#### 支持的 action
 
-- `allow`: Allow the connection, no further processing.
-- `block`: Block the connection, no further processing.
-- `drop`: For UDP, drop the packet that triggered the rule, continue processing future packets in the same flow. For
-  TCP, same as `block`.
-- `modify`: For UDP, modify the packet that triggered the rule using the given modifier, continue processing future
-  packets in the same flow. For TCP, same as `allow`.
+| 动作     | TCP                          | UDP                                                            |
+| -------- | ---------------------------- | -------------------------------------------------------------- |
+| `allow`  | 放行连接，不再处理后续的包。 | 放行连接，不再处理后续的包。                                   |
+| `block`  | 阻断连接，不再处理后续的包。 | 阻断连接，不再处理后续的包。                                   |
+| `drop`   | 效果同 `block`。             | 丢弃触发规则的包，但继续处理同一流中的后续包。                 |
+| `modify` | 效果同 `allow`。             | 用指定的修改器修改触发规则的包，然后继续处理同一流中的后续包。 |

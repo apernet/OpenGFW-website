@@ -1,20 +1,21 @@
 ---
-title: 分析器
-hide:
-  - navigation
+title: Analyzers
 ---
 
-分析器是 OpenGFW 的重要组件之一，作用是分析连接，检查是否是支持的协议，并从该连接中提取信息，作为提供给规则引擎的属性，以便与用户提供的规则进行匹配。OpenGFW 会自动分析提供的规则中引用了哪些分析器，仅启用需要的分析器。
+Analyzers are one of the main components of OpenGFW. Their job is to analyze a connection, see if it's a protocol they
+support, and if so, extract information from that connection and provide properties for the rule engine to match against
+user-provided rules. OpenGFW will automatically analyze which analyzers are referenced in the given rules and enable
+only those that are needed.
 
-本文档列出了每个分析器提供的属性。所有列出的属性都可以在规则中使用。
+This document lists the properties provided by each analyzer that can be used by rules.
 
 !!! tip
 
-    许多分析器并非一次性提供全部属性，而是会随着传输进行逐步增加/更新字段。例如，当一个 HTTP 连接发送了请求但还没有收到响应时，HTTP 分析器只会有 `req` 部分而没有 `resp`。每个连接会在任何属性发生变化时匹配一次规则。规则需要能正确处理需要的字段为 `nil` 的情况。（如 `http != nil && http.resp != nil` 或利用 `?` 操作符 `http?.resp`）
+    Many analyzers do not provide all properties at once, but rather gradually add/update fields as the connection proceeds. For instance, when an HTTP connection has sent a request but has not yet received a response, the HTTP analyzer will only have the `req` part without `resp`. Each connection is checked against rules whenever at least one property changes. Rules need to be able to correctly handle cases where the needed fields are nil. (e.g., `http != nil && http.resp != nil` or using the `?` operator `http?.resp`)
 
-## 内置
+## Built-in
 
-每个连接都会有以下内置属性：
+Every connection will always have the following properties:
 
 ```json
 {
@@ -31,7 +32,7 @@ hide:
 }
 ```
 
-阻止到 `8.8.8.8` 的 UDP 流量：
+Examples for blocking UDP traffic to `8.8.8.8`:
 
 ```yaml
 - name: Block 8.8.8.8 UDP
@@ -41,7 +42,7 @@ hide:
 
 ## DNS (TCP & UDP)
 
-对于请求：
+For queries:
 
 ```json
 {
@@ -66,7 +67,7 @@ hide:
 }
 ```
 
-对于相应：
+For responses:
 
 ```json
 {
@@ -100,7 +101,7 @@ hide:
 }
 ```
 
-丢弃 `www.google.com` 的 DNS 请求：
+Example for blocking DNS queries for `www.google.com`:
 
 ```yaml
 - name: Block Google DNS
@@ -108,9 +109,9 @@ hide:
   expr: dns != nil && !dns.qr && any(dns.questions, {.name == "www.google.com"})
 ```
 
-## FET (全加密连接)
+## FET (Fully Encrypted Traffic)
 
-请阅读论文 https://www.usenix.org/system/files/usenixsecurity23-wu-mingshi.pdf 以获取更多信息。
+Check https://www.usenix.org/system/files/usenixsecurity23-wu-mingshi.pdf for more information.
 
 ```json
 {
@@ -125,7 +126,7 @@ hide:
 }
 ```
 
-屏蔽全加密连接：
+Example for blocking fully encrypted traffic:
 
 ```yaml
 - name: Block suspicious proxy traffic
@@ -170,7 +171,7 @@ hide:
 }
 ```
 
-屏蔽对 `ipinfo.io` 的 HTTP 请求：
+Example for blocking HTTP requests to `ipinfo.io`:
 
 ```yaml
 - name: Block ipinfo.io HTTP
@@ -197,7 +198,7 @@ hide:
 }
 ```
 
-屏蔽 SSH：
+Example for blocking all SSH connections:
 
 ```yaml
 - name: Block SSH
@@ -237,7 +238,7 @@ hide:
 }
 ```
 
-屏蔽对 `ipinfo.io` 的 TLS 请求：
+Example for blocking TLS connections to `ipinfo.io`:
 
 ```yaml
 - name: Block ipinfo.io TLS
@@ -247,7 +248,8 @@ hide:
 
 ## QUIC
 
-QUIC 解析器的格式与 TLS 一样，但是目前只支持请求 (req) 部分：
+QUIC analyzer produces the same result format as TLS analyzer, but currently only supports "req" direction (client
+hello), not "resp" (server hello).
 
 ```json
 {
@@ -267,7 +269,7 @@ QUIC 解析器的格式与 TLS 一样，但是目前只支持请求 (req) 部分
 }
 ```
 
-屏蔽对 `quic.rocks` 的 QUIC 请求：
+Example for blocking QUIC connections to `quic.rocks`:
 
 ```yaml
 - name: Block quic.rocks QUIC
@@ -275,7 +277,7 @@ QUIC 解析器的格式与 TLS 一样，但是目前只支持请求 (req) 部分
   expr: quic != nil && quic.req != nil && quic.req.sni == "quic.rocks"
 ```
 
-## Trojan (代理协议)
+## Trojan (proxy protocol)
 
 ```json
 {
@@ -286,7 +288,7 @@ QUIC 解析器的格式与 TLS 一样，但是目前只支持请求 (req) 部分
 }
 ```
 
-屏蔽 Trojan 连接：
+Example for blocking Trojan connections:
 
 ```yaml
 - name: Block Trojan
@@ -324,7 +326,7 @@ SOCKS4:
 }
 ```
 
-SOCKS5 无验证:
+SOCKS5 without auth:
 
 ```json
 {
@@ -352,7 +354,7 @@ SOCKS5 无验证:
 }
 ```
 
-SOCKS5 带验证:
+SOCKS5 with auth:
 
 ```json
 {
@@ -383,7 +385,7 @@ SOCKS5 带验证:
 }
 ```
 
-屏蔽到 `google.com:80` 的 SOCKS 请求，以及带有用户名 `foobar` 的 SOCKS 请求：
+Example for blocking connections to `google.com:80` and user `foobar`:
 
 ```yaml
 - name: Block SOCKS google.com:80
@@ -421,25 +423,25 @@ SOCKS5 带验证:
 }
 ```
 
-屏蔽 WireGuard：
+Example for blocking WireGuard traffic:
 
 ```yaml
-# 误伤: 高
+# false positive: high
 - name: Block all WireGuard-like traffic
   action: block
   expr: wireguard != nil
 
-# 误伤: 中
+# false positive: medium
 - name: Block WireGuard by handshake_initiation
   action: drop
   expr: wireguard?.handshake_initiation != nil
 
-# 误伤: 低
+# false positive: low
 - name: Block WireGuard by handshake_response
   action: drop
   expr: wireguard?.handshake_response?.receiver_index_matched == true
 
-# 误伤: 极低
+# false positive: pretty low
 - name: Block WireGuard by packet_data
   action: block
   expr: wireguard?.packet_data?.receiver_index_matched == true
