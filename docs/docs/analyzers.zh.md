@@ -278,7 +278,7 @@ QUIC 解析器的格式与 TLS 一样，但是目前只支持请求 (req) 部分
 ```json
 {
   "trojan": {
-    "seq": [680, 4514, 293],
+    "seq": [682, 4540, 1310, 1031],
     "yes": true
   }
 }
@@ -291,6 +291,10 @@ QUIC 解析器的格式与 TLS 一样，但是目前只支持请求 (req) 部分
   action: block
   expr: trojan != nil && trojan.yes
 ```
+
+!!! warning
+
+    Trojan 检测目前依赖基于流量特征的启发式算法，并不保证完全准确。有大概 0.6% 的假阳性率和 10% 的假阴性率。像上述规则这样直接屏蔽所有疑似 Trojan 的连接可能导致误伤正常 TLS 连接。目前建议使用日志模式记录下 IP 地址，进行额外的人工审查。
 
 ## SOCKS
 
@@ -441,4 +445,25 @@ SOCKS5 带验证:
 - name: Block WireGuard by packet_data
   action: block
   expr: wireguard?.packet_data?.receiver_index_matched == true
+```
+
+## OpenVPN
+
+OpenVPN 分析器对于 TCP 和 UDP 模式都可以检测。注意如果你的 OpenVPN 配置包含了 `tls-crypt` 则不能正常工作，因为在这种情况下连接会被一个预共享密钥加密，成为全加密连接。
+
+```json
+{
+  "openvpn": {
+    "rx_pkt_cnt": 88,
+    "tx_pkt_cnt": 23
+  }
+}
+```
+
+屏蔽 OpenVPN（如果检测到超过 50 个 OpenVPN 包，防止误伤）：
+
+```yaml
+- name: Block OpenVPN
+  action: block
+  expr: openvpn != nil && openvpn.rx_pkt_cnt + openvpn.tx_pkt_cnt > 50
 ```

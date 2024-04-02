@@ -282,7 +282,7 @@ Example for blocking QUIC connections to `quic.rocks`:
 ```json
 {
   "trojan": {
-    "seq": [680, 4514, 293],
+    "seq": [682, 4540, 1310, 1031],
     "yes": true
   }
 }
@@ -295,6 +295,10 @@ Example for blocking Trojan connections:
   action: block
   expr: trojan != nil && trojan.yes
 ```
+
+!!! warning
+
+    Trojan detection currently relies on traffic heuristics that are not always accurate, with approximately 0.6% false positives and 10% false negatives. Blocking all suspected Trojan connections, as in this example, can break normal TLS connections. For now, we recommend logging them and manually checking the IP addresses involved.
 
 ## SOCKS
 
@@ -445,4 +449,25 @@ Example for blocking WireGuard traffic:
 - name: Block WireGuard by packet_data
   action: block
   expr: wireguard?.packet_data?.receiver_index_matched == true
+```
+
+## OpenVPN
+
+OpenVPN analyzer can detect both UDP and TCP modes. Note that this won't work if you have `tls-crypt` in your OpenVPN configuration, as the traffic will be fully encrypted with a pre-shared key.
+
+```json
+{
+  "openvpn": {
+    "rx_pkt_cnt": 88,
+    "tx_pkt_cnt": 23
+  }
+}
+```
+
+Example for blocking OpenVPN traffic, if the total packet count is more than 50 (to avoid potential false positives):
+
+```yaml
+- name: Block OpenVPN
+  action: block
+  expr: openvpn != nil && openvpn.rx_pkt_cnt + openvpn.tx_pkt_cnt > 50
 ```
