@@ -80,6 +80,7 @@ nav:
   - Home: index.md
   - Docs:
       - Build & Run: docs/build-run.md
+      - Rules: docs/rules.md
       - Analyzers: docs/analyzers.md
       - Functions: docs/functions.md
   - GitHub: https://github.com/apernet/OpenGFW
@@ -102,6 +103,7 @@ plugins:
             - 首页: index.md
             - 文档:
                 - 构建与运行: docs/build-run.md
+                - 规则文件: docs/rules.md
                 - 分析器: docs/analyzers.md
                 - 内置函数: docs/functions.md
             - GitHub: https://github.com/apernet/OpenGFW

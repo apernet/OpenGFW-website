@@ -32,7 +32,7 @@ Every connection will always have the following properties:
 }
 ```
 
-Examples for blocking UDP traffic to `8.8.8.8`:
+Example for blocking UDP traffic to `8.8.8.8`:
 
 ```yaml
 - name: Block 8.8.8.8 UDP
