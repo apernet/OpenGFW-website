@@ -49,3 +49,20 @@ Example:
   action: block
   expr: geosite(string(tls?.req?.sni), "bilibili")
 ```
+
+### `lookup`
+
+```
+lookup(domain: string) -> list<string>
+lookup(domain: string, server: string) -> list<string>
+```
+
+Perform a DNS lookup for a domain, returns the list of IP addresses (both A and AAAA records) returned by the DNS server. If the server address is not specified, it uses the system default. Note that this uses the standard DNS protocol (not DNS over TLS, DNS over HTTPS, for example), and you must specify both IP and port for the server address (e.g. `8.8.8.8:53`).
+
+Example:
+
+```yaml
+- name: SNI mismatch
+  log: true
+  expr: tls?.req?.sni != nil && ip.dst not in lookup(tls.req.sni)
+```

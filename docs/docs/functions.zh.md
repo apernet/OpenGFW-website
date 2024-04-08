@@ -49,3 +49,20 @@ geosite(domain: string, category: string) -> bool
   action: block
   expr: geosite(string(tls?.req?.sni), "bilibili")
 ```
+
+### `lookup`
+
+```
+lookup(domain: string) -> list<string>
+lookup(domain: string, server: string) -> list<string>
+```
+
+对指定的域名进行 DNS 查询，返回 IP 地址列表（同时包括 A 和 AAAA 记录）。如果未指定服务器地址，则使用系统默认的 DNS。此操作使用标准 DNS 协议（不是 DNS over TLS、DNS over HTTPS 等），且服务器地址必须同时包括 IP 地址和端口（如 `8.8.8.8:53`）。
+
+示例：
+
+```yaml
+- name: SNI mismatch
+  log: true
+  expr: tls?.req?.sni != nil && ip.dst not in lookup(tls.req.sni)
+```

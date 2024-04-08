@@ -118,3 +118,17 @@ The data available for matching comes from analyzers, please refer to the [analy
   action: block
   expr: cidr(string(ip.dst), "192.168.0.0/16")
 ```
+
+#### Block Xray Reality/ShadowTLS connections
+
+How it works: The TLS handshake of protocols like Xray Reality/ShadowTLS "steals" that of real websites, but the destination IP is the proxy server rather than a real IP that belongs to those websites. Therefore, you can check the connection by performing DNS lookups on the SNI domain name; if the destination IP isn't among what's in the DNS records, then the connection can be considered suspicious.
+
+!!! warning
+
+    To minimize false positives, the rule below queries two additional servers besides the system's default DNS. The connection is allowed as long as the destination IP is in one of the results. Be sure to adjust the rule to your actual network environment. If the domain name cannot be resolved, the `lookup` function will fail, causing this rule to fail as well, and the connection won't be blocked.
+
+```yaml
+- name: SNI mismatch
+  action: block
+  expr: tls?.req?.sni != nil && ip.dst not in concat(lookup(tls.req.sni), lookup(tls.req.sni, "1.1.1.1:53"), lookup(tls.req.sni, "8.8.8.8:53"))
+```

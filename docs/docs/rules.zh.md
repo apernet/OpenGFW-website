@@ -118,3 +118,17 @@ title: 规则文件
   action: block
   expr: cidr(string(ip.dst), "192.168.0.0/16")
 ```
+
+#### 阻断 Xray Reality/ShadowTLS 连接
+
+原理：Xray Reality/ShadowTLS 等协议的 TLS 握手是 "盗用" 其他正常网站的，但连接的目标 IP 是代理服务器而并非这些网站的真正 IP。因此可以通过 DNS 查询 SNI 域名解析到的地址，如果连接的目标 IP 不在这些地址中，则阻断连接。
+
+!!! warning
+
+    为了尽量降低误伤，下面提供的规则中除了使用系统默认 DNS 外还通过另外两个服务器进行查询，只要目标 IP 在任何结果中出现则放行。请根据实际网络环境对规则进行调整。如果域名无法解析，则 `lookup` 函数会出错导致此条规则出错，也不会阻断连接。
+
+```yaml
+- name: SNI mismatch
+  action: block
+  expr: tls?.req?.sni != nil && ip.dst not in concat(lookup(tls.req.sni), lookup(tls.req.sni, "1.1.1.1:53"), lookup(tls.req.sni, "8.8.8.8:53"))
+```
