@@ -35,14 +35,14 @@ io:
   queueSize: 1024
   rcvBuf: 4194304
   sndBuf: 4194304
-  local: true # 如果需要在 FORWARD 链上运行 OpenGFW，请设置为 false
-  rst: false # 是否对要阻断的 TCP 连接发送 RST。仅在 local=false 时有效
+  local: true # (1)!
+  rst: false # (2)!
 
 workers:
-  count: 4
-  queueSize: 16
-  tcpMaxBufferedPagesTotal: 4096
-  tcpMaxBufferedPagesPerConn: 64
+  count: 4 # (3)!
+  queueSize: 64
+  tcpMaxBufferedPagesTotal: 65536
+  tcpMaxBufferedPagesPerConn: 16
   udpMaxStreams: 4096
 
 # 指定的 geoip/geosite 档案路径
@@ -51,3 +51,7 @@ workers:
 #   geoip: geoip.dat
 #   geosite: geosite.dat
 ```
+
+1. 如果想在 FORWARD 链上运行（如在路由器上），设置为 false
+2. 如果想为被阻断的 TCP 连接发送 RST，设置为 true。**仅在 local=false 时有效**
+3. 建议不超过 CPU 核心数

@@ -35,14 +35,14 @@ io:
   queueSize: 1024
   rcvBuf: 4194304
   sndBuf: 4194304
-  local: true # set to false if you want to run OpenGFW on FORWARD chain
-  rst: false # set to true if you want to send RST for blocked TCP connections, local=false only
+  local: true # (1)!
+  rst: false # (2)!
 
 workers:
-  count: 4
-  queueSize: 16
-  tcpMaxBufferedPagesTotal: 4096
-  tcpMaxBufferedPagesPerConn: 64
+  count: 4 # (3)!
+  queueSize: 64
+  tcpMaxBufferedPagesTotal: 65536
+  tcpMaxBufferedPagesPerConn: 16
   udpMaxStreams: 4096
 
 # The path to load specific local geoip/geosite db files.
@@ -51,3 +51,7 @@ workers:
 #   geoip: geoip.dat
 #   geosite: geosite.dat
 ```
+
+1. Set to false if you want to run OpenGFW on FORWARD chain (e.g. on a router)
+2. Set to true if you want to send RST for blocked TCP connections, **local=false only**
+3. Recommended to be no more than the number of CPU cores
