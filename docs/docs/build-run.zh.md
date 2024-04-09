@@ -43,6 +43,7 @@ workers:
   queueSize: 64
   tcpMaxBufferedPagesTotal: 65536
   tcpMaxBufferedPagesPerConn: 16
+  tcpTimeout: 10m # (4)!
   udpMaxStreams: 4096
 
 # 指定的 geoip/geosite 档案路径
@@ -55,3 +56,4 @@ workers:
 1. 如果想在 FORWARD 链上运行（如在路由器上），设置为 false
 2. 如果想为被阻断的 TCP 连接发送 RST，设置为 true。**仅在 local=false 时有效**
 3. 建议不超过 CPU 核心数
+4. 一个连接多久没有数据传输后会被认为是死连接。TCP 重组的连接池会以每分钟一次的频率清理死连接

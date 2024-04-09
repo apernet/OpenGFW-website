@@ -43,6 +43,7 @@ workers:
   queueSize: 64
   tcpMaxBufferedPagesTotal: 65536
   tcpMaxBufferedPagesPerConn: 16
+  tcpTimeout: 10m # (4)!
   udpMaxStreams: 4096
 
 # The path to load specific local geoip/geosite db files.
@@ -55,3 +56,4 @@ workers:
 1. Set to false if you want to run OpenGFW on FORWARD chain (e.g. on a router)
 2. Set to true if you want to send RST for blocked TCP connections, **local=false only**
 3. Recommended to be no more than the number of CPU cores
+4. How long a connection is considered dead when no data is being transferred. Dead connections are purged from TCP reassembly pools once per minute.
