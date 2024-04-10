@@ -48,7 +48,7 @@ workers:
 
 # 指定的 geoip/geosite 档案路径
 # 如果未设置，将自动从 https://github.com/Loyalsoldier/v2ray-rules-dat 下载
-# geo:
+# ruleset:
 #   geoip: geoip.dat
 #   geosite: geosite.dat
 ```

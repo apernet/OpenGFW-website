@@ -48,7 +48,7 @@ workers:
 
 # The path to load specific local geoip/geosite db files.
 # If not set, they will be automatically downloaded from https://github.com/Loyalsoldier/v2ray-rules-dat
-# geo:
+# ruleset:
 #   geoip: geoip.dat
 #   geosite: geosite.dat
 ```
