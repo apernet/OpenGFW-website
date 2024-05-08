@@ -5,7 +5,9 @@ title: Build & Run
 ### Build
 
 ```shell
-export CGO_ENABLED=0
+sudo apt install -y libpcap-dev
+# or whatever it takes to install libpcap-dev on your system
+
 go build
 ```
 
@@ -17,6 +19,14 @@ export OPENGFW_LOG_LEVEL=debug
 ```
 
 Where `config.yaml` is the config file and `rules.yaml` is the rules file.
+
+#### pcap file mode
+
+```shell
+./OpenGFW -p your.pcap -c config.yaml rules.yaml
+```
+
+In pcap mode, none of the actions in the rules have any effect. This is mainly for debugging purposes.
 
 #### OpenWrt
 
@@ -51,9 +61,13 @@ workers:
 # ruleset:
 #   geoip: geoip.dat
 #   geosite: geosite.dat
+
+replay:
+  realtime: false # (5)!
 ```
 
 1. Set to false if you want to run OpenGFW on FORWARD chain (e.g. on a router)
 2. Set to true if you want to send RST for blocked TCP connections, **local=false only**
 3. Recommended to be no more than the number of CPU cores
 4. How long a connection is considered dead when no data is being transferred. Dead connections are purged from TCP reassembly pools once per minute.
+5. Set to true if you want to playback the packets in the pcap file in "real time" (instead of as fast as possible)

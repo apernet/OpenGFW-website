@@ -5,7 +5,9 @@ title: 构建与运行
 ### 构建
 
 ```shell
-export CGO_ENABLED=0
+sudo apt install -y libpcap-dev
+# 或者在你使用的发行版上安装 libpcap-dev 的对应命令
+
 go build
 ```
 
@@ -17,6 +19,14 @@ export OPENGFW_LOG_LEVEL=debug
 ```
 
 其中 `config.yaml` 是配置文件，`rules.yaml` 是规则文件。
+
+#### pcap 文件模式
+
+```shell
+./OpenGFW -p your.pcap -c config.yaml rules.yaml
+```
+
+在 pcap 模式下，规则中的所有动作都没有任何效果。此模式主要用于调试。
 
 #### OpenWrt
 
@@ -51,9 +61,13 @@ workers:
 # ruleset:
 #   geoip: geoip.dat
 #   geosite: geosite.dat
+
+replay:
+  realtime: false # (5)!
 ```
 
 1. 如果想在 FORWARD 链上运行（如在路由器上），设置为 false
 2. 如果想为被阻断的 TCP 连接发送 RST，设置为 true。**仅在 local=false 时有效**
 3. 建议不超过 CPU 核心数
 4. 一个连接多久没有数据传输后会被认为是死连接。TCP 重组的连接池会以每分钟一次的频率清理死连接
+5. 是否按照 pcap 文件中的时间戳以实时速度回放每个数据包
