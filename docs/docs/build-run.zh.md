@@ -5,9 +5,7 @@ title: 构建与运行
 ### 构建
 
 ```shell
-sudo apt install -y libpcap-dev
-# 或者在你使用的发行版上安装 libpcap-dev 的对应命令
-
+export CGO_ENABLED=0
 go build
 ```
 
@@ -20,7 +18,7 @@ export OPENGFW_LOG_LEVEL=debug
 
 其中 `config.yaml` 是配置文件，`rules.yaml` 是规则文件。
 
-#### pcap 文件模式
+#### pcap 文件回放模式
 
 ```shell
 ./OpenGFW -p your.pcap -c config.yaml rules.yaml
@@ -70,4 +68,4 @@ replay:
 2. 如果想为被阻断的 TCP 连接发送 RST，设置为 true。**仅在 local=false 时有效**
 3. 建议不超过 CPU 核心数
 4. 一个连接多久没有数据传输后会被认为是死连接。TCP 重组的连接池会以每分钟一次的频率清理死连接
-5. 是否按照 pcap 文件中的时间戳以实时速度回放每个数据包
+5. 如果希望以实时速度（pcap 文件中的时间戳）回放 pcap 中的数据包（而不是以能处理的最快速度），设置为 true
