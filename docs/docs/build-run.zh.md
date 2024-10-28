@@ -41,6 +41,10 @@ opkg install nftables kmod-nft-queue kmod-nf-conntrack-netlink
 ```yaml
 io:
   queueSize: 1024
+  queueNum: 100 # (6)!
+  table: opengfw # (7)!
+  connMarkAccept: 1001 # (8)!
+  connMarkDrop: 1002 # (9)!
   rcvBuf: 4194304
   sndBuf: 4194304
   local: true # (1)!
@@ -69,3 +73,7 @@ replay:
 3. 建议不超过 CPU 核心数
 4. 一个连接多久没有数据传输后会被认为是死连接。TCP 重组的连接池会以每分钟一次的频率清理死连接
 5. 如果希望以实时速度（pcap 文件中的时间戳）回放 pcap 中的数据包（而不是以能处理的最快速度），设置为 true
+6. nfqueue 队列序号
+7. nftables 表名
+8. 放行连接的 connmark 值
+9. 阻断连接的 connmark 值

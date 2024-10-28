@@ -41,6 +41,10 @@ opkg install nftables kmod-nft-queue kmod-nf-conntrack-netlink
 ```yaml
 io:
   queueSize: 1024
+  queueNum: 100 # (6)!
+  table: opengfw # (7)!
+  connMarkAccept: 1001 # (8)!
+  connMarkDrop: 1002 # (9)!
   rcvBuf: 4194304
   sndBuf: 4194304
   local: true # (1)!
@@ -69,3 +73,7 @@ replay:
 3. Recommended to be no more than the number of CPU cores
 4. How long a connection is considered dead when no data is being transferred. Dead connections are purged from TCP reassembly pools once per minute.
 5. Set to true if you want to replay the packets in the pcap file in "real time" (instead of as fast as possible)
+6. nfqueue queue number
+7. nftables table name
+8. connmark value for accepted connections
+9. connmark value for dropped connections
